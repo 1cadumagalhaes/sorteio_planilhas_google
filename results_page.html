@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorteio de ingressos do TDC!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        #loading-container,
+        #results-container,
+        #congrats-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+         #results-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #results-list li {
+            font-size: 20px;
+            margin: 10px 0;
+        }
+
+        #results-list li span {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+  <div id="loading-container">
+      <div class="spinner"></div>
+      <p id="loading-message">Getting participants</p>
+  </div>
+
+  <div id="results-container" style="display: none;">
+      <h1>Sorteio de ingressos do TDC!</h1>
+      <ul id="results-list"></ul>
+  </div>
+
+  <div id="congrats-container" style="display: none;">
+      <h1>Parabéns!</h1>
+      <p>Envio os códigos e instruções hoje depois das 19h</p>
+  </div>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          // Simulate fetching results (replace with your actual array of objects)
+          const results = JSON.parse(<?= ganhadores ?>);
+
+          // Display loading spinner
+          const loadingContainer = document.getElementById("loading-container");
+          const congratsContainer = document.getElementById("congrats-container");
+          const resultsContainer = document.getElementById("results-container");
+          const loadingMessage = document.getElementById("loading-message");
+          const resultsList = document.getElementById("results-list");
+          
+
+          let currentIndex = 0;
+
+          function displayWinner() {
+              const result = results[currentIndex];
+              const listItem = document.createElement("li");
+              listItem.innerHTML = `<span>${result.name}</span> - <span>${result.user}</span>`;
+              resultsList.appendChild(listItem);
+
+              currentIndex++;
+
+              if (currentIndex < results.length) {
+                  setTimeout(() => {
+                      resultsList.innerHTML = "";
+                      displayWinner();
+                  }, 2000);
+              } else {
+                  // All winners displayed, show the final list
+                  setTimeout(() => {
+                      resultsList.innerHTML = "";
+                      results.forEach(result => {
+                          const listItem = document.createElement("li");
+                          listItem.textContent = `${result.name} - ${result.user}`;
+                          resultsList.appendChild(listItem);
+                      });
+
+                      congratsContainer.style.display = "block";
+                  }, 2000);
+              }
+          }
+                  setTimeout(() => {
+              // Simulate loading delay
+              loadingMessage.textContent = "Shuffling pool";
+              setTimeout(() => {
+                  // Simulate another loading delay
+                  loadingMessage.textContent = "Getting result";
+                  setTimeout(() => {
+                      // Simulate final loading delay
+                      loadingContainer.style.display = "none";
+                      resultsContainer.style.display = "block";
+
+                      // Display results one at a time
+                      displayWinner();
+                  }, 2000);
+              }, 2000);
+          }, 2000);
+      });
+  </script>
+
+</body>
+</html>
